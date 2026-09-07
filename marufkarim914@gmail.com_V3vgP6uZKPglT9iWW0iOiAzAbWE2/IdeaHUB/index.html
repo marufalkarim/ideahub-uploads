@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IdeaHub - Project Discovery & Collaboration</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <!-- JSZip for Folder Downloads -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo" style="cursor: pointer;" onclick="window.app && window.app.navigate('discovery')">
+                    <i class='bx bx-cube-alt'></i>
+                    <span>IdeaHub</span>
+                </div>
+                <button class="mobile-menu-close"><i class='bx bx-x'></i></button>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <ul class="nav-list">
+                    <li class="nav-item" data-route="discovery">
+                        <a href="#" class="nav-link active" data-view="discovery">
+                            <i class='bx bx-compass'></i>
+                            <span>Discovery</span>
+                        </a>
+                    </li>
+                    <li class="nav-item" data-route="my-projects">
+                        <a href="#" class="nav-link" data-view="my-projects">
+                            <i class='bx bx-folder'></i>
+                            <span>My Projects</span>
+                        </a>
+                    </li>
+                    <li class="nav-item" data-route="submit">
+                        <a href="#" class="nav-link" data-view="submit">
+                            <i class='bx bx-layer-plus'></i>
+                            <span>Submit Idea</span>
+                        </a>
+                    </li>
+                    <li class="nav-item" data-route="pending" style="display: none;" id="nav-pending-link">
+                        <a href="#" class="nav-link" data-view="pending">
+                            <i class='bx bx-time'></i>
+                            <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
+                                <span>Pending Queue</span>
+                                <span class="badge" id="badge-pending" style="display:none; position:relative; top:0; right:0;"></span>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="nav-item" data-route="leaderboard">
+                        <a href="#" class="nav-link" data-view="leaderboard">
+                            <i class='bx bx-trophy'></i>
+                            <span>Leaderboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-view="dashboard">
+                            <i class='bx bx-chart'></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item" data-route="messages">
+                        <a href="#" class="nav-link" data-view="messages" style="position:relative;">
+                            <i class='bx bx-message-square-dots'></i>
+                            <span>Messages</span>
+                            <span class="badge badge-messages" style="display:none; position:absolute; right:15px; top:12px;"></span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <img src="https://api.dicebear.com/9.x/initials/svg?seed=Alex+Dev" alt="User Avatar" class="avatar">
+                    <div class="user-info">
+                        <span class="user-name">Alex Dev</span>
+                        <span class="user-role">Contributor</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="topbar">
+                <button class="mobile-menu-toggle"><i class='bx bx-menu'></i></button>
+                <div class="search-bar">
+                    <i class='bx bx-search'></i>
+                    <input type="text" placeholder="Search projects, skills, or authors... (Ctrl+K)">
+                    <span class="shortcut">⌘K</span>
+                </div>
+                <div class="topbar-actions">
+                    <div class="notification-wrapper" style="position: relative;">
+                        <button class="icon-btn notification-btn"><i class='bx bx-bell'></i><span class="badge" id="noti-badge" style="display:none;"></span></button>
+                        <div class="notification-dropdown glass-panel" style="position: absolute; right: 0; top: 100%; width: 300px; max-height: 400px; overflow-y: auto; background: rgba(15,23,42,0.98); backdrop-filter: blur(20px); border: 1px solid var(--border-color); border-radius: var(--radius-lg); z-index: 100; box-shadow: 0 10px 30px rgba(0,0,0,0.8);">
+                            <div class="dropdown-header">
+                                <h4>Notifications</h4>
+                                <span class="mark-read" id="mark-all-read" style="cursor: pointer; color: var(--primary); font-size: 0.8rem;">Mark all as read</span>
+                            </div>
+                            <div class="dropdown-body" id="noti-list">
+                                <div class="text-center text-muted" style="padding: 20px;">No notifications</div>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="primary-btn" onclick="app.navigate('submit')">
+                        <i class='bx bx-plus'></i> New Project
+                    </button>
+                </div>
+            </header>
+
+            <!-- Dynamic Views Container -->
+            <div id="app-root" class="view-container">
+                <!-- Views will be injected here -->
+            </div>
+        </main>
+    </div>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="bottom-nav">
+        <a href="#" class="nav-link" data-view="discovery">
+            <i class='bx bx-compass'></i>
+            <span>Discover</span>
+        </a>
+        <a href="#" class="nav-link" data-view="my-projects">
+            <i class='bx bx-folder'></i>
+            <span>Projects</span>
+        </a>
+        <a href="#" class="nav-link submit-nav" data-view="submit">
+            <div class="submit-fab">
+                <i class='bx bx-plus'></i>
+            </div>
+        </a>
+        <a href="#" class="nav-link" data-view="messages">
+            <i class='bx bx-message-square-dots'></i>
+            <div style="display:flex; justify-content:space-between; align-items:center; width:100%; position:relative;">
+                                <span>Messages</span>
+                                <span class="badge badge-messages" style="display:none; position:absolute; top:-10px; right:-10px;"></span>
+                            </div>
+        </a>
+        <a href="#" class="nav-link" data-view="profile">
+            <i class='bx bx-user'></i>
+            <span>Profile</span>
+        </a>
+    </nav>
+
+    <!-- AI Chat Bot -->
+    <div class="ai-chat-widget">
+        <div class="ai-chat-box glass-panel hidden">
+            <div class="chat-header">
+                <div>
+                    <i class='bx bx-brain'></i> AI Assistant
+                </div>
+                <button class="icon-btn close-chat"><i class='bx bx-x'></i></button>
+            </div>
+            <div class="chat-messages">
+                <div class="message ai-message">
+                    Hello! I'm your AI architect. How can I help you build your project today?
+                </div>
+            </div>
+            <div class="chat-input-area">
+                <input type="text" placeholder="Ask me anything..." class="chat-input">
+                <button class="primary-btn send-btn"><i class='bx bx-send'></i></button>
+            </div>
+        </div>
+        
+        <button class="floating-chat-btn">
+            <i class='bx bx-bot'></i>
+        </button>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/data.js"></script>
+    <script src="js/modules/home.js"></script>
+    <script src="js/modules/login.js"></script>
+    <script src="js/modules/adminLogin.js"></script>
+    <script src="js/modules/leaderboard.js"></script>
+    <script src="js/modules/discovery.js"></script>
+    <script src="js/modules/myProjects.js"></script>
+    <script src="js/modules/pendingProjects.js"></script>
+    <script src="js/modules/submission.js"></script>
+    <script src="js/modules/projectDetails.js"></script>
+    <script src="js/modules/dashboard.js"></script>
+    <script src="js/modules/settings.js"></script>
+    <script src="js/modules/profile.js"></script>
+    <script src="js/modules/messages.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
+
